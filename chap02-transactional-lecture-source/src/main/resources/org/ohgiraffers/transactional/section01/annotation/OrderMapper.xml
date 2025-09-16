@@ -22,4 +22,21 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
+    <insert id="insertOrderMenu" parameterType="org.ohgiraffers.transactional.section01.annotation.OrderMenu">
+        INSERT
+          INTO TBL_ORDER_MENU
+        (
+          ORDER_CODE
+        , MENU_CODE
+        , ORDER_AMOUNT
+        )
+        VALUES
+        (
+          #{orderCode}
+        , #{menuCode}
+        , #{orderAmount}
+        )
+
+    </insert>
 </mapper>

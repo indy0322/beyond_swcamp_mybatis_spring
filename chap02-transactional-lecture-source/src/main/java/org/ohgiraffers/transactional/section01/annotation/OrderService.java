@@ -2,6 +2,7 @@ package org.ohgiraffers.transactional.section01.annotation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 @Service
 public class OrderService {
@@ -21,7 +24,7 @@ public class OrderService {
         this.menuMapper = menuMapper;
     }
 
-    @Transactional
+    @Transactional(propagation = REQUIRED, isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public void registNewOrder(OrderDTO orderInfo){
 
         /* 설명. 1. 주문한 메뉴들의 코드만 추출(DTO에서) */
@@ -56,6 +59,10 @@ public class OrderService {
         System.out.println("주문 성공 후 방금 주문한 번호가 Order 엔티티에 들어있는지 확인: " + order.getOrderCode());
 
         /* 설명. 5. tbl_order_menu 테이블에도 주문한 메뉴 갯구만큼 메뉴 갯수만큼 메뉴를 추가(insert) */
+        List<OrderMenuDTO> orderMenuDTO = orderInfo.getOrderMenus();
+        for(OrderMenuDTO menuDTO : orderMenuDTO){
+            orderMapper.insertOrderMenu(new OrderMenu(order.getOrderCode(), menuDTO.getMenuCode(), menuDTO.getOrderAmount()));
+        }
     }
 
     private int calcTotalPrice(List<OrderMenuDTO> orderMenus, List<Menu> menus) {
