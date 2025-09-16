@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -24,14 +25,20 @@ public class OrderService {
     public void registNewOrder(OrderDTO orderInfo){
 
         /* 설명. 1. 주문한 메뉴들의 코드만 추출(DTO에서) */
-        List<Integer> menuCodes = new ArrayList<>();
-        List<OrderMenuDTO> orderMenus = orderInfo.getOrderMenus();
-        for (OrderMenuDTO orderMenu : orderMenus) {
-            menuCodes.add(orderMenu.getMenuCode());
-        }
+//        List<Integer> menuCodes = new ArrayList<>();
+//        List<OrderMenuDTO> orderMenus = orderInfo.getOrderMenus();
+//        for (OrderMenuDTO orderMenu : orderMenus) {
+//            menuCodes.add(orderMenu.getMenuCode());
+//        }
+        List<Integer> menuCodes = orderInfo.getOrderMenus()
+                                            .stream()
+//                                           .map(orderMenu -> orderMenu.getMenuCode())
+                                            .map(OrderMenuDTO::getMenuCode)
+                                            .collect(Collectors.toList());
 
         Map<String, List<Integer>> map = new HashMap<>();
         map.put("menuCodes", menuCodes);
+
 
         /* 설명. 2. 주문한 메뉴 별로 Menu 엔티티에 담아서 조회(select)해 오기(부가적인 메뉴인 정보 추출(단가)) */
         List<Menu> menus = menuMapper.selectMenuByMenuCodes(map);

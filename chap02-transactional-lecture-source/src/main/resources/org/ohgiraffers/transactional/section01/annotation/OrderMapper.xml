@@ -18,7 +18,8 @@
         , #{totalOrderPrice}
         )
         <selectKey keyProperty="orderCode" order="AFTER" resultType="_int">
-            SELECT MAX(ORDER_CODE) FROM TBL_ORDER
+<!--             SELECT MAX(ORDER_CODE) FROM TBL_ORDER   -->
+            SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
 </mapper>
